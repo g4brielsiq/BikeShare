@@ -41,13 +41,17 @@ public class RepositorioSistema implements Serializable {
         return usuarios.get(id);
     }
 
-    public boolean existeEmail(String email) {
+    public Usuario buscarUsuarioPorEmail(String email) {
         for (Usuario u : usuarios.values()) {
             if (u.getEmail().equalsIgnoreCase(email)) {
-                return true;
+                return u;
             }
         }
-        return false;
+        return null;
+    }
+
+    public boolean existeEmail(String email) {
+        return buscarUsuarioPorEmail(email) != null;
     }
 
     public PlanoTarifacao buscarPlano(String nomePlano) {

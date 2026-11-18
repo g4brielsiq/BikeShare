@@ -79,6 +79,15 @@ public class ServicoUsuario {
         return usuario.getAtributo(atributo);
     }
 
+    public String getUsuarioPorEmail(String email) {
+        Validador.validarNaoVazio(email, "Email nao pode ser nulo.");
+        Usuario usuario = gerenciador.getRepositorio().buscarUsuarioPorEmail(email);
+        if (usuario == null) {
+            throw new EntidadeNaoEncontradaException("Usuario nao existe.");
+        }
+        return usuario.getId();
+    }
+
     private void validarDadosComuns(String nome, String email, String senha,
                                     String tipoInformado, String tipoEsperado) {
         Validador.validarNaoVazio(nome, "Nome nao pode ser nulo.");
