@@ -1,11 +1,16 @@
 package br.ufal.ic.p2.bikeshare.servicos;
 
+import br.ufal.ic.p2.bikeshare.entidades.Cartao;
 import br.ufal.ic.p2.bikeshare.entidades.PessoaFisica;
 import br.ufal.ic.p2.bikeshare.entidades.PessoaJuridica;
+import br.ufal.ic.p2.bikeshare.entidades.Pix;
 import br.ufal.ic.p2.bikeshare.entidades.PlanoTarifacao;
+import br.ufal.ic.p2.bikeshare.entidades.SaldoPreCarregado;
 import br.ufal.ic.p2.bikeshare.entidades.Usuario;
+import br.ufal.ic.p2.bikeshare.excecoes.AtributoNaoAlteravelException;
 import br.ufal.ic.p2.bikeshare.excecoes.EntidadeJaExisteException;
 import br.ufal.ic.p2.bikeshare.excecoes.EntidadeNaoEncontradaException;
+import br.ufal.ic.p2.bikeshare.excecoes.MetodoPagamentoInvalidoException;
 import br.ufal.ic.p2.bikeshare.excecoes.OperacaoInvalidaPorTipoException;
 import br.ufal.ic.p2.bikeshare.excecoes.ParametroInvalidoException;
 import br.ufal.ic.p2.bikeshare.excecoes.TipoInvalidoException;
@@ -86,6 +91,91 @@ public class ServicoUsuario {
             throw new EntidadeNaoEncontradaException("Usuario nao existe.");
         }
         return usuario.getId();
+    }
+
+    public void alterarUsuario(String idUsuario, String atributo, String valor) {
+        RepositorioSistema repo = gerenciador.getRepositorio();
+        Usuario usuario = buscarUsuarioExistente(repo, idUsuario);
+        if (Validador.isVazio(atributo)) {
+            throw new AtributoNaoAlteravelException("Atributo nao pode ser alterado.");
+        }
+        switch (atributo) {
+            case "nome":
+                Validador.validarNaoVazio(valor, "Nome nao pode ser nulo.");
+                usuario.alterarNome(valor);
+                break;
+            case "email":
+                Validador.validarEmail(valor);
+                Usuario existente = repo.buscarUsuarioPorEmail(valor);
+                if (existente != null && !existente.getId().equals(usuario.getId())) {
+                    throw new EntidadeJaExisteException("Email ja cadastrado.");
+                }
+                usuario.alterarEmail(valor);
+                break;
+            case "senha":
+                Validador.validarNaoVazio(valor, "Senha nao pode ser nula.");
+                usuario.alterarSenha(valor);
+                break;
+            case "plano":
+                PlanoTarifacao novoPlano = validarPlano(repo, valor);
+                usuario.alterarPlano(novoPlano);
+                break;
+            case "metodoPagamento":
+                if (!SaldoPreCarregado.NOME_METODO.equals(valor)) {
+                    throw new MetodoPagamentoInvalidoException("Valor de metodo de pagamento invalido.");
+                }
+                usuario.ativarSaldoPreCarregado();
+                break;
+            case "saldo":
+                usuario.validarUsaSaldoPreCarregado();
+                BigDecimal acressimo = Validador.converterDecimalPositivo(
+                        valor,
+                        "Valor nao pode ser nulo.",
+                        "Valor deve ser numerico.",
+                        "Valor deve ser positivo."
+                );
+                usuario.adicionarSaldo(acressimo);
+                break;
+            default:
+                throw new AtributoNaoAlteravelException("Atributo nao pode ser alterado.");
+        }
+    }
+
+    public void alterarUsuario(String idUsuario, String atributo, String valor1, String chave) {
+        RepositorioSistema repo = gerenciador.getRepositorio();
+        Usuario usuario = buscarUsuarioExistente(repo, idUsuario);
+        if (!"metodoPagamento".equals(atributo)) {
+            throw new AtributoNaoAlteravelException("Atributo nao pode ser alterado.");
+        }
+        if (!Pix.NOME_METODO.equals(valor1)) {
+            throw new MetodoPagamentoInvalidoException("Valor de metodo de pagamento invalido.");
+        }
+        Validador.validarNaoVazio(chave, "Chave pix nao pode ser nula.");
+        usuario.definirMetodoPagamento(new Pix(chave));
+    }
+
+    public void alterarUsuario(String idUsuario, String atributo, String valor1,
+                               String numero, String validade) {
+        RepositorioSistema repo = gerenciador.getRepositorio();
+        Usuario usuario = buscarUsuarioExistente(repo, idUsuario);
+        if (!"metodoPagamento".equals(atributo)) {
+            throw new AtributoNaoAlteravelException("Atributo nao pode ser alterado.");
+        }
+        if (!Cartao.NOME_METODO.equals(valor1)) {
+            throw new MetodoPagamentoInvalidoException("Valor de metodo de pagamento invalido.");
+        }
+        Validador.validarNaoVazio(numero, "Numero do cartao nao pode ser nulo.");
+        Validador.validarValidadeCartao(validade);
+        usuario.definirMetodoPagamento(new Cartao(numero, validade));
+    }
+
+    private Usuario buscarUsuarioExistente(RepositorioSistema repo, String idUsuario) {
+        Validador.validarNaoVazio(idUsuario, "Identificacao do usuario nao pode ser nula.");
+        Usuario usuario = repo.buscarUsuario(idUsuario);
+        if (usuario == null) {
+            throw new EntidadeNaoEncontradaException("Usuario nao existe.");
+        }
+        return usuario;
     }
 
     private void validarDadosComuns(String nome, String email, String senha,

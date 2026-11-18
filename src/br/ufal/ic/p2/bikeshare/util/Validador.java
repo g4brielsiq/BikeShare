@@ -46,4 +46,20 @@ public final class Validador {
         }
         return valor.setScale(2, RoundingMode.HALF_UP);
     }
+
+    public static BigDecimal converterDecimalPositivo(String valorStr, String msgNulo,
+                                                      String msgNaoNumerico, String msgNaoPositivo) {
+        BigDecimal valor = converterDecimalNaoNegativo(valorStr, msgNulo, msgNaoNumerico, msgNaoPositivo);
+        if (valor.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ParametroInvalidoException(msgNaoPositivo);
+        }
+        return valor;
+    }
+
+    public static void validarValidadeCartao(String validade) {
+        validarNaoVazio(validade, "Validade do cartao nao pode ser nula.");
+        if (!validade.trim().matches("^(0[1-9]|1[0-2])/\\d{4}$")) {
+            throw new ParametroInvalidoException("Validade do cartao invalida.");
+        }
+    }
 }
