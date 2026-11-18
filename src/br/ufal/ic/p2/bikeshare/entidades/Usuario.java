@@ -60,6 +60,17 @@ public abstract class Usuario implements Serializable {
                 return FormatadorDataMoeda.formatarMoeda(mensalidade);
             case "metodoPagamento":
                 return "nenhum";
+            case "numeroCartao":
+            case "validadeCartao":
+                throw new OperacaoInvalidaPorTipoException("Usuario nao usa cartao.");
+            case "chavePix":
+                throw new OperacaoInvalidaPorTipoException("Usuario nao usa pix.");
+            case "saldo":
+                throw new OperacaoInvalidaPorTipoException("Usuario nao usa saldo pre-carregado.");
+            case "aluguelAtivo":
+                return "nenhum";
+            case "totalPendencias":
+                return FormatadorDataMoeda.formatarMoeda(BigDecimal.ZERO);
             case "cpf":
             case "cnpj":
             case "razaoSocial":
