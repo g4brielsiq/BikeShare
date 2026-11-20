@@ -1,6 +1,7 @@
 package br.ufal.ic.p2.bikeshare.repositorio;
 
 import br.ufal.ic.p2.bikeshare.entidades.ConfiguracaoSistema;
+import br.ufal.ic.p2.bikeshare.entidades.Estacao;
 import br.ufal.ic.p2.bikeshare.entidades.PlanoTarifacao;
 import br.ufal.ic.p2.bikeshare.entidades.Usuario;
 
@@ -14,13 +15,17 @@ public class RepositorioSistema implements Serializable {
     private final ConfiguracaoSistema configuracao;
     private final Map<String, Usuario> usuarios;
     private final Map<String, PlanoTarifacao> planos;
+    private final Map<String, Estacao> estacoes;
     private int contadorUsuarios;
+    private int contadorEstacoes;
 
     public RepositorioSistema() {
         this.configuracao = new ConfiguracaoSistema();
         this.usuarios = new LinkedHashMap<>();
         this.planos = new LinkedHashMap<>();
+        this.estacoes = new LinkedHashMap<>();
         this.contadorUsuarios = 0;
+        this.contadorEstacoes = 0;
 
         PlanoTarifacao avulso = PlanoTarifacao.criarPlanoAvulso(configuracao);
         PlanoTarifacao assinante = PlanoTarifacao.criarPlanoAssinante(configuracao);
@@ -63,6 +68,19 @@ public class RepositorioSistema implements Serializable {
             return null;
         }
         return planos.get(nomePlano);
+    }
+
+    public String gerarProximoIdEstacao() {
+        contadorEstacoes++;
+        return "E" + contadorEstacoes;
+    }
+
+    public void adicionarEstacao(Estacao estacao) {
+        estacoes.put(estacao.getId(), estacao);
+    }
+
+    public Estacao buscarEstacao(String id) {
+        return estacoes.get(id);
     }
 
     public ConfiguracaoSistema getConfiguracao() {

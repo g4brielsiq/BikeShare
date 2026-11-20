@@ -62,4 +62,23 @@ public final class Validador {
             throw new ParametroInvalidoException("Validade do cartao invalida.");
         }
     }
+
+    public static int converterInteiroPositivo(String valorStr, String msgNulo,
+                                               String msgNaoNumerico, String msgNaoPositivo) {
+        validarNaoVazio(valorStr, msgNulo);
+        String texto = valorStr.trim();
+        if (!texto.matches("^-?\\d+$")) {
+            throw new ParametroInvalidoException(msgNaoNumerico);
+        }
+        int valor;
+        try {
+            valor = Integer.parseInt(texto);
+        } catch (NumberFormatException e) {
+            throw new ParametroInvalidoException(msgNaoNumerico);
+        }
+        if (valor <= 0) {
+            throw new ParametroInvalidoException(msgNaoPositivo);
+        }
+        return valor;
+    }
 }
