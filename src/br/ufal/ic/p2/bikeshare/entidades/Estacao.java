@@ -52,6 +52,12 @@ public class Estacao implements Serializable {
         bicicletasEstacionadas.remove(idBicicleta);
     }
 
+    public void liberarBicicletaParaAluguel(Bicicleta bicicleta) {
+        bicicletasEstacionadas.remove(bicicleta.getId());
+        bicicleta.definirEstacaoAtual(null);
+        bicicleta.definirEstado("emUso");
+    }
+
     public String getId() {
         return id;
     }

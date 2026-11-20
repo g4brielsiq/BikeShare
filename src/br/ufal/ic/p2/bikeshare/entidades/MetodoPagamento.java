@@ -28,4 +28,7 @@ public abstract class MetodoPagamento implements Serializable {
     public void adicionarSaldo(BigDecimal valor) {
         throw new OperacaoInvalidaPorTipoException("Usuario nao usa saldo pre-carregado.");
     }
+
+    public void validarDisponibilidadeParaRetirada() {
+    }
 }

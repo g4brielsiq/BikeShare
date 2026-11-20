@@ -4,11 +4,16 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 import java.util.Locale;
 
 public final class FormatadorDataMoeda {
 
     private static final DecimalFormat FORMATADOR_MOEDA;
+    private static final DateTimeFormatter FORMATADOR_DATA_HORA =
+            DateTimeFormatter.ofPattern("d/M/uuuu H:mm").withResolverStyle(ResolverStyle.STRICT);
 
     static {
         DecimalFormatSymbols simbolos = new DecimalFormatSymbols(Locale.forLanguageTag("pt-BR"));
@@ -26,5 +31,13 @@ public final class FormatadorDataMoeda {
             return "0,00";
         }
         return FORMATADOR_MOEDA.format(valor.setScale(2, RoundingMode.HALF_UP));
+    }
+
+    public static String formatarDataHora(LocalDateTime dataHora) {
+        return dataHora.format(FORMATADOR_DATA_HORA);
+    }
+
+    public static DateTimeFormatter getFormatadorDataHora() {
+        return FORMATADOR_DATA_HORA;
     }
 }

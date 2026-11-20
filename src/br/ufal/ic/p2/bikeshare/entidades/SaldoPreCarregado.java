@@ -1,5 +1,6 @@
 package br.ufal.ic.p2.bikeshare.entidades;
 
+import br.ufal.ic.p2.bikeshare.excecoes.SaldoInsuficienteException;
 import br.ufal.ic.p2.bikeshare.util.FormatadorDataMoeda;
 
 import java.math.BigDecimal;
@@ -31,6 +32,13 @@ public class SaldoPreCarregado extends MetodoPagamento {
     @Override
     public void adicionarSaldo(BigDecimal valor) {
         this.saldo = this.saldo.add(valor);
+    }
+
+    @Override
+    public void validarDisponibilidadeParaRetirada() {
+        if (this.saldo.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new SaldoInsuficienteException("Saldo insuficiente.");
+        }
     }
 
     public BigDecimal getSaldo() {

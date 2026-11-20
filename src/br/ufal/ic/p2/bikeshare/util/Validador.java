@@ -5,6 +5,8 @@ import br.ufal.ic.p2.bikeshare.excecoes.ParametroNuloException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 
 public final class Validador {
 
@@ -98,5 +100,14 @@ public final class Validador {
             throw new ParametroInvalidoException("Nivel de bateria deve estar entre 0 e 100.");
         }
         return nivel;
+    }
+
+    public static LocalDateTime converterDataHora(String dataStr) {
+        validarNaoVazio(dataStr, "Data nao pode ser nula.");
+        try {
+            return LocalDateTime.parse(dataStr.trim(), FormatadorDataMoeda.getFormatadorDataHora());
+        } catch (DateTimeParseException e) {
+            throw new ParametroInvalidoException("Data invalida.");
+        }
     }
 }

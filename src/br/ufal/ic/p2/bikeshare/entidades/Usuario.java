@@ -1,7 +1,10 @@
 package br.ufal.ic.p2.bikeshare.entidades;
 
+import br.ufal.ic.p2.bikeshare.excecoes.AluguelEmAndamentoException;
 import br.ufal.ic.p2.bikeshare.excecoes.AtributoInexistenteException;
+import br.ufal.ic.p2.bikeshare.excecoes.MetodoPagamentoInvalidoException;
 import br.ufal.ic.p2.bikeshare.excecoes.OperacaoInvalidaPorTipoException;
+import br.ufal.ic.p2.bikeshare.excecoes.UsuarioInadimplenteException;
 import br.ufal.ic.p2.bikeshare.util.FormatadorDataMoeda;
 import br.ufal.ic.p2.bikeshare.util.Validador;
 
@@ -187,5 +190,21 @@ public abstract class Usuario implements Serializable {
 
     public void definirAluguelAtivo(String idAluguelAtivo) {
         this.idAluguelAtivo = idAluguelAtivo;
+    }
+
+    public void validarSituacaoParaRetirada() {
+        if ("inadimplente".equals(this.estado)) {
+            throw new UsuarioInadimplenteException("Usuario inadimplente.");
+        }
+        if (possuiAluguelEmAndamento()) {
+            throw new AluguelEmAndamentoException("Usuario ja possui um aluguel em andamento.");
+        }
+    }
+
+    public void validarMetodoPagamentoParaRetirada() {
+        if (this.metodoPagamentoAtivo == null) {
+            throw new MetodoPagamentoInvalidoException("Metodo de pagamento nao cadastrado.");
+        }
+        this.metodoPagamentoAtivo.validarDisponibilidadeParaRetirada();
     }
 }

@@ -1,6 +1,7 @@
 package br.ufal.ic.p2.bikeshare.entidades;
 
 import br.ufal.ic.p2.bikeshare.excecoes.AtributoInexistenteException;
+import br.ufal.ic.p2.bikeshare.excecoes.BateriaInsuficienteException;
 import br.ufal.ic.p2.bikeshare.util.Validador;
 
 import java.io.Serializable;
@@ -26,6 +27,12 @@ public abstract class Bicicleta implements Serializable {
 
     public boolean isDisponivelParaRetirada(int nivelMinimoBateria) {
         return "disponivel".equals(estado) && possuiBateriaSuficienteParaRetirada(nivelMinimoBateria);
+    }
+
+    public void validarBateriaParaRetirada(int nivelMinimoBateria) {
+        if (!possuiBateriaSuficienteParaRetirada(nivelMinimoBateria)) {
+            throw new BateriaInsuficienteException("Nivel de bateria insuficiente.");
+        }
     }
 
     public String getAtributo(String atributo) {
