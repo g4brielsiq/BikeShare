@@ -84,7 +84,7 @@ public class ServicoAluguel {
             return;
         }
 
-        if (minutos >= config.getTempoMaximoAluguelMinutos()) {
+        if (minutos > config.getTempoMaximoAluguelMinutos()) {
             aluguel.registrarConclusao(Aluguel.ESTADO_EXPIRADO, estacaoDestino.getId(), dataHoraFim, BigDecimal.ZERO);
             estacaoDestino.receberBicicletaDevolvida(bicicleta, "emManutencao");
             usuario.registrarPenalidade(new PenalidadeAtraso(config.getValorPenalidadeAtraso()));
