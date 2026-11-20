@@ -1,5 +1,6 @@
 package br.ufal.ic.p2.bikeshare.repositorio;
 
+import br.ufal.ic.p2.bikeshare.entidades.Bicicleta;
 import br.ufal.ic.p2.bikeshare.entidades.ConfiguracaoSistema;
 import br.ufal.ic.p2.bikeshare.entidades.Estacao;
 import br.ufal.ic.p2.bikeshare.entidades.PlanoTarifacao;
@@ -16,6 +17,7 @@ public class RepositorioSistema implements Serializable {
     private final Map<String, Usuario> usuarios;
     private final Map<String, PlanoTarifacao> planos;
     private final Map<String, Estacao> estacoes;
+    private final Map<String, Bicicleta> bicicletas;
     private int contadorUsuarios;
     private int contadorEstacoes;
 
@@ -24,6 +26,7 @@ public class RepositorioSistema implements Serializable {
         this.usuarios = new LinkedHashMap<>();
         this.planos = new LinkedHashMap<>();
         this.estacoes = new LinkedHashMap<>();
+        this.bicicletas = new LinkedHashMap<>();
         this.contadorUsuarios = 0;
         this.contadorEstacoes = 0;
 
@@ -81,6 +84,18 @@ public class RepositorioSistema implements Serializable {
 
     public Estacao buscarEstacao(String id) {
         return estacoes.get(id);
+    }
+
+    public void adicionarBicicleta(Bicicleta bicicleta) {
+        bicicletas.put(bicicleta.getId(), bicicleta);
+    }
+
+    public Bicicleta buscarBicicleta(String id) {
+        return bicicletas.get(id);
+    }
+
+    public void removerBicicleta(String id) {
+        bicicletas.remove(id);
     }
 
     public ConfiguracaoSistema getConfiguracao() {
