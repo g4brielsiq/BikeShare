@@ -81,4 +81,22 @@ public final class Validador {
         }
         return valor;
     }
+
+    public static int converterNivelBateria(String nivelStr) {
+        validarNaoVazio(nivelStr, "Nivel de bateria nao pode ser nulo.");
+        String texto = nivelStr.trim();
+        if (!texto.matches("^-?\\d+$")) {
+            throw new ParametroInvalidoException("Nivel de bateria deve ser numerico.");
+        }
+        int nivel;
+        try {
+            nivel = Integer.parseInt(texto);
+        } catch (NumberFormatException e) {
+            throw new ParametroInvalidoException("Nivel de bateria deve ser numerico.");
+        }
+        if (nivel < 0 || nivel > 100) {
+            throw new ParametroInvalidoException("Nivel de bateria deve estar entre 0 e 100.");
+        }
+        return nivel;
+    }
 }
