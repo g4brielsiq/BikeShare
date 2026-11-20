@@ -73,7 +73,7 @@ public class Facade {
     // =====================================================================
 
     public void removerUsuario(String usuario) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+        servicoUsuario.removerUsuario(usuario);
     }
 
     // =====================================================================

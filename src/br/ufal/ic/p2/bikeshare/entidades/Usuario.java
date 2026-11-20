@@ -21,6 +21,7 @@ public abstract class Usuario implements Serializable {
     private BigDecimal mensalidade;
     private final SaldoPreCarregado carteiraSaldoPreCarregado;
     private MetodoPagamento metodoPagamentoAtivo;
+    private String idAluguelAtivo;
 
     protected Usuario(String id, String nome, String email, String senha,
                       String plano, boolean possuiMensalidade, BigDecimal mensalidade) {
@@ -34,6 +35,7 @@ public abstract class Usuario implements Serializable {
         this.mensalidade = mensalidade;
         this.carteiraSaldoPreCarregado = new SaldoPreCarregado();
         this.metodoPagamentoAtivo = null;
+        this.idAluguelAtivo = null;
     }
 
     public abstract String getTipo();
@@ -73,7 +75,7 @@ public abstract class Usuario implements Serializable {
                 }
                 return metodoPagamentoAtivo.getAtributo(atributo);
             case "aluguelAtivo":
-                return "nenhum";
+                return idAluguelAtivo == null ? "nenhum" : idAluguelAtivo;
             case "totalPendencias":
                 return FormatadorDataMoeda.formatarMoeda(BigDecimal.ZERO);
             case "cpf":
@@ -173,5 +175,17 @@ public abstract class Usuario implements Serializable {
 
     public MetodoPagamento getMetodoPagamentoAtivo() {
         return metodoPagamentoAtivo;
+    }
+
+    public boolean possuiAluguelEmAndamento() {
+        return idAluguelAtivo != null;
+    }
+
+    public String getIdAluguelAtivo() {
+        return idAluguelAtivo;
+    }
+
+    public void definirAluguelAtivo(String idAluguelAtivo) {
+        this.idAluguelAtivo = idAluguelAtivo;
     }
 }

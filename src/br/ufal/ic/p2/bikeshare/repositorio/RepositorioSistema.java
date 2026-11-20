@@ -37,6 +37,10 @@ public class RepositorioSistema implements Serializable {
         usuarios.put(usuario.getId(), usuario);
     }
 
+    public void removerUsuario(String id) {
+        usuarios.remove(id);
+    }
+
     public Usuario buscarUsuario(String id) {
         return usuarios.get(id);
     }

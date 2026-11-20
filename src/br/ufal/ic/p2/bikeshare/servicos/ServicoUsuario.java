@@ -7,6 +7,7 @@ import br.ufal.ic.p2.bikeshare.entidades.Pix;
 import br.ufal.ic.p2.bikeshare.entidades.PlanoTarifacao;
 import br.ufal.ic.p2.bikeshare.entidades.SaldoPreCarregado;
 import br.ufal.ic.p2.bikeshare.entidades.Usuario;
+import br.ufal.ic.p2.bikeshare.excecoes.AluguelEmAndamentoException;
 import br.ufal.ic.p2.bikeshare.excecoes.AtributoNaoAlteravelException;
 import br.ufal.ic.p2.bikeshare.excecoes.EntidadeJaExisteException;
 import br.ufal.ic.p2.bikeshare.excecoes.EntidadeNaoEncontradaException;
@@ -167,6 +168,15 @@ public class ServicoUsuario {
         Validador.validarNaoVazio(numero, "Numero do cartao nao pode ser nulo.");
         Validador.validarValidadeCartao(validade);
         usuario.definirMetodoPagamento(new Cartao(numero, validade));
+    }
+
+    public void removerUsuario(String idUsuario) {
+        RepositorioSistema repo = gerenciador.getRepositorio();
+        Usuario usuario = buscarUsuarioExistente(repo, idUsuario);
+        if (usuario.possuiAluguelEmAndamento()) {
+            throw new AluguelEmAndamentoException("Nao e possivel remover usuario com aluguel em andamento.");
+        }
+        repo.removerUsuario(usuario.getId());
     }
 
     private Usuario buscarUsuarioExistente(RepositorioSistema repo, String idUsuario) {
