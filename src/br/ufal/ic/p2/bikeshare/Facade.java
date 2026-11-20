@@ -1,6 +1,7 @@
 package br.ufal.ic.p2.bikeshare;
 
 import br.ufal.ic.p2.bikeshare.servicos.GerenciadorPersistenciaHistorico;
+import br.ufal.ic.p2.bikeshare.servicos.ServicoEstacaoBicicleta;
 import br.ufal.ic.p2.bikeshare.servicos.ServicoUsuario;
 
 /**
@@ -12,10 +13,12 @@ public class Facade {
 
     private final GerenciadorPersistenciaHistorico gerenciador;
     private final ServicoUsuario servicoUsuario;
+    private final ServicoEstacaoBicicleta servicoEstacaoBicicleta;
 
     public Facade() {
         this.gerenciador = new GerenciadorPersistenciaHistorico();
         this.servicoUsuario = new ServicoUsuario(this.gerenciador);
+        this.servicoEstacaoBicicleta = new ServicoEstacaoBicicleta(this.gerenciador);
     }
 
     // =====================================================================
@@ -81,7 +84,7 @@ public class Facade {
     // =====================================================================
 
     public String criarEstacao(String nome, String endereco, String capacidade) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+        return servicoEstacaoBicicleta.criarEstacao(nome, endereco, capacidade);
     }
 
     // =====================================================================
@@ -109,11 +112,11 @@ public class Facade {
     // =====================================================================
 
     public String getBicicletasDisponiveis(String estacao) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+        return servicoEstacaoBicicleta.getBicicletasDisponiveis(estacao);
     }
 
     public String getVagasDisponiveis(String estacao) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+        return servicoEstacaoBicicleta.getVagasDisponiveis(estacao);
     }
 
     public String getEstadoBicicleta(String bicicleta) {
