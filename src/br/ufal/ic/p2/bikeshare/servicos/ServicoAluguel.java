@@ -27,7 +27,6 @@ public class ServicoAluguel {
         LocalDateTime dataHoraInicio = Validador.converterDataHora(dataStr);
 
         usuario.validarSituacaoParaRetirada();
-        usuario.validarMetodoPagamentoParaRetirada();
 
         if (!estacao.contemBicicleta(bicicleta.getId())) {
             throw new BicicletaIndisponivelException("Bicicleta nao esta nesta estacao.");
@@ -37,6 +36,8 @@ public class ServicoAluguel {
         }
         int nivelMinimoBateria = repo.getConfiguracao().getNivelMinimoBateriaEletrica();
         bicicleta.validarBateriaParaRetirada(nivelMinimoBateria);
+
+        usuario.validarMetodoPagamentoParaRetirada();
 
         String idAluguel = repo.gerarProximoIdAluguel();
         Aluguel novoAluguel = new Aluguel(idAluguel, usuario.getId(), bicicleta.getId(), estacao.getId(), dataHoraInicio);
