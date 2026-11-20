@@ -139,7 +139,7 @@ public class Facade {
     // =====================================================================
 
     public void devolverBicicleta(String aluguel, String estacao, String data) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+        servicoAluguel.devolverBicicleta(aluguel, estacao, data);
     }
 
     // =====================================================================
