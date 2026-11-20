@@ -58,6 +58,11 @@ public class Estacao implements Serializable {
         bicicleta.definirEstado("emUso");
     }
 
+    public void receberBicicletaDevolvida(Bicicleta bicicleta, String novoEstadoBicicleta) {
+        bicicleta.definirEstado(novoEstadoBicicleta);
+        estacionarBicicleta(bicicleta);
+    }
+
     public String getId() {
         return id;
     }

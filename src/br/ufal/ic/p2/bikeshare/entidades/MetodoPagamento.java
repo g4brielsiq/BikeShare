@@ -31,4 +31,7 @@ public abstract class MetodoPagamento implements Serializable {
 
     public void validarDisponibilidadeParaRetirada() {
     }
+
+    public void debitar(BigDecimal valor) {
+    }
 }

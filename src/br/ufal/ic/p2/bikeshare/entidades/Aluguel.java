@@ -13,6 +13,9 @@ public class Aluguel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public static final String ESTADO_EM_ANDAMENTO = "emAndamento";
+    public static final String ESTADO_FINALIZADO = "finalizado";
+    public static final String ESTADO_CANCELADO = "cancelado";
+    public static final String ESTADO_EXPIRADO = "expirado";
 
     private final String id;
     private final String idUsuario;
@@ -70,6 +73,18 @@ public class Aluguel implements Serializable {
         if (ESTADO_EM_ANDAMENTO.equals(estado)) {
             throw new AluguelEmAndamentoException("Aluguel ainda esta em andamento.");
         }
+    }
+
+    public boolean isEmAndamento() {
+        return ESTADO_EM_ANDAMENTO.equals(estado);
+    }
+
+    public void registrarConclusao(String novoEstado, String idEstacaoDestino,
+                                   LocalDateTime fim, BigDecimal valorCobrado) {
+        this.estado = novoEstado;
+        this.idEstacaoDestino = idEstacaoDestino;
+        this.fim = fim;
+        this.valorCobrado = valorCobrado;
     }
 
     public String getId() {

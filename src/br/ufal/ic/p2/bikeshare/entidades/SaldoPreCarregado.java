@@ -41,6 +41,14 @@ public class SaldoPreCarregado extends MetodoPagamento {
         }
     }
 
+    @Override
+    public void debitar(BigDecimal valor) {
+        if (this.saldo.compareTo(valor) < 0) {
+            throw new SaldoInsuficienteException("Saldo insuficiente.");
+        }
+        this.saldo = this.saldo.subtract(valor);
+    }
+
     public BigDecimal getSaldo() {
         return saldo;
     }

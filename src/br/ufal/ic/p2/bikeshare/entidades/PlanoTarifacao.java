@@ -2,6 +2,7 @@ package br.ufal.ic.p2.bikeshare.entidades;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class PlanoTarifacao implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -59,5 +60,15 @@ public class PlanoTarifacao implements Serializable {
 
     public BigDecimal getMensalidadePadrao() {
         return mensalidadePadrao;
+    }
+
+    public BigDecimal calcularValorBase(long minutos) {
+        if (minutos <= franquiaMinutos) {
+            return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        }
+        long minutosExcedentes = minutos - franquiaMinutos;
+        return valorMinutoExcedente
+                .multiply(BigDecimal.valueOf(minutosExcedentes))
+                .setScale(2, RoundingMode.HALF_UP);
     }
 }

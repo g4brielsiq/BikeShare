@@ -10,6 +10,8 @@ import br.ufal.ic.p2.bikeshare.util.Validador;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Usuario implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -25,6 +27,7 @@ public abstract class Usuario implements Serializable {
     private final SaldoPreCarregado carteiraSaldoPreCarregado;
     private MetodoPagamento metodoPagamentoAtivo;
     private String idAluguelAtivo;
+    private final List<Penalidade> penalidades;
 
     protected Usuario(String id, String nome, String email, String senha,
                       String plano, boolean possuiMensalidade, BigDecimal mensalidade) {
@@ -39,6 +42,7 @@ public abstract class Usuario implements Serializable {
         this.carteiraSaldoPreCarregado = new SaldoPreCarregado();
         this.metodoPagamentoAtivo = null;
         this.idAluguelAtivo = null;
+        this.penalidades = new ArrayList<>();
     }
 
     public abstract String getTipo();
@@ -80,7 +84,7 @@ public abstract class Usuario implements Serializable {
             case "aluguelAtivo":
                 return idAluguelAtivo == null ? "nenhum" : idAluguelAtivo;
             case "totalPendencias":
-                return FormatadorDataMoeda.formatarMoeda(BigDecimal.ZERO);
+                return FormatadorDataMoeda.formatarMoeda(calcularTotalPendencias());
             case "cpf":
             case "cnpj":
             case "razaoSocial":
@@ -206,5 +210,25 @@ public abstract class Usuario implements Serializable {
             throw new MetodoPagamentoInvalidoException("Metodo de pagamento nao cadastrado.");
         }
         this.metodoPagamentoAtivo.validarDisponibilidadeParaRetirada();
+    }
+
+    public void debitarValorCorrida(BigDecimal valor) {
+        if (this.metodoPagamentoAtivo == null) {
+            throw new MetodoPagamentoInvalidoException("Metodo de pagamento nao cadastrado.");
+        }
+        this.metodoPagamentoAtivo.debitar(valor);
+    }
+
+    public void registrarPenalidade(Penalidade penalidade) {
+        this.penalidades.add(penalidade);
+        this.estado = "inadimplente";
+    }
+
+    public BigDecimal calcularTotalPendencias() {
+        BigDecimal total = BigDecimal.ZERO;
+        for (Penalidade p : penalidades) {
+            total = total.add(p.getValor());
+        }
+        return total;
     }
 }

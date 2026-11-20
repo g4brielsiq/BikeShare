@@ -5,6 +5,7 @@ import br.ufal.ic.p2.bikeshare.excecoes.BateriaInsuficienteException;
 import br.ufal.ic.p2.bikeshare.util.Validador;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 public abstract class Bicicleta implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -24,6 +25,8 @@ public abstract class Bicicleta implements Serializable {
     public abstract String getNivelBateriaFormatado();
 
     public abstract boolean possuiBateriaSuficienteParaRetirada(int nivelMinimoBateria);
+
+    public abstract BigDecimal calcularAdicionalEletrica(long minutos, BigDecimal taxaPorMinuto);
 
     public boolean isDisponivelParaRetirada(int nivelMinimoBateria) {
         return "disponivel".equals(estado) && possuiBateriaSuficienteParaRetirada(nivelMinimoBateria);
