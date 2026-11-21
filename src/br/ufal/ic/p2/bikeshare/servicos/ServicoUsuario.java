@@ -77,11 +77,7 @@ public class ServicoUsuario {
     }
 
     public String getAtributoUsuario(String idUsuario, String atributo) {
-        Validador.validarNaoVazio(idUsuario, "Identificacao do usuario nao pode ser nula.");
-        Usuario usuario = gerenciador.getRepositorio().buscarUsuario(idUsuario);
-        if (usuario == null) {
-            throw new EntidadeNaoEncontradaException("Usuario nao existe.");
-        }
+        Usuario usuario = gerenciador.getRepositorio().buscarUsuarioExistente(idUsuario);
         return usuario.getAtributo(atributo);
     }
 
@@ -96,7 +92,7 @@ public class ServicoUsuario {
 
     public void alterarUsuario(String idUsuario, String atributo, String valor) {
         RepositorioSistema repo = gerenciador.getRepositorio();
-        Usuario usuario = buscarUsuarioExistente(repo, idUsuario);
+        Usuario usuario = repo.buscarUsuarioExistente(idUsuario);
         if (Validador.isVazio(atributo)) {
             throw new AtributoNaoAlteravelException("Atributo nao pode ser alterado.");
         }
@@ -144,7 +140,7 @@ public class ServicoUsuario {
 
     public void alterarUsuario(String idUsuario, String atributo, String valor1, String chave) {
         RepositorioSistema repo = gerenciador.getRepositorio();
-        Usuario usuario = buscarUsuarioExistente(repo, idUsuario);
+        Usuario usuario = repo.buscarUsuarioExistente(idUsuario);
         if (!"metodoPagamento".equals(atributo)) {
             throw new AtributoNaoAlteravelException("Atributo nao pode ser alterado.");
         }
@@ -158,7 +154,7 @@ public class ServicoUsuario {
     public void alterarUsuario(String idUsuario, String atributo, String valor1,
                                String numero, String validade) {
         RepositorioSistema repo = gerenciador.getRepositorio();
-        Usuario usuario = buscarUsuarioExistente(repo, idUsuario);
+        Usuario usuario = repo.buscarUsuarioExistente(idUsuario);
         if (!"metodoPagamento".equals(atributo)) {
             throw new AtributoNaoAlteravelException("Atributo nao pode ser alterado.");
         }
@@ -172,20 +168,11 @@ public class ServicoUsuario {
 
     public void removerUsuario(String idUsuario) {
         RepositorioSistema repo = gerenciador.getRepositorio();
-        Usuario usuario = buscarUsuarioExistente(repo, idUsuario);
+        Usuario usuario = repo.buscarUsuarioExistente(idUsuario);
         if (usuario.possuiAluguelEmAndamento()) {
             throw new AluguelEmAndamentoException("Nao e possivel remover usuario com aluguel em andamento.");
         }
         repo.removerUsuario(usuario.getId());
-    }
-
-    private Usuario buscarUsuarioExistente(RepositorioSistema repo, String idUsuario) {
-        Validador.validarNaoVazio(idUsuario, "Identificacao do usuario nao pode ser nula.");
-        Usuario usuario = repo.buscarUsuario(idUsuario);
-        if (usuario == null) {
-            throw new EntidadeNaoEncontradaException("Usuario nao existe.");
-        }
-        return usuario;
     }
 
     private void validarDadosComuns(String nome, String email, String senha,

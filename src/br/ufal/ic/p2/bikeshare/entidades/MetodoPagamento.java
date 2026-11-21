@@ -12,6 +12,10 @@ public abstract class MetodoPagamento implements Serializable {
     public abstract String getNomeMetodo();
 
     public String getAtributo(String atributo) {
+        return lancarErroAtributoIncompativel(atributo);
+    }
+
+    public static String lancarErroAtributoIncompativel(String atributo) {
         switch (atributo) {
             case "numeroCartao":
             case "validadeCartao":
@@ -23,6 +27,10 @@ public abstract class MetodoPagamento implements Serializable {
             default:
                 throw new AtributoInexistenteException("Atributo nao existe.");
         }
+    }
+
+    public void validarSuporteRecargaSaldo() {
+        throw new OperacaoInvalidaPorTipoException("Usuario nao usa saldo pre-carregado.");
     }
 
     public void adicionarSaldo(BigDecimal valor) {

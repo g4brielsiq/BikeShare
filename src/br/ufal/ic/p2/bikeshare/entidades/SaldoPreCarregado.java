@@ -30,6 +30,10 @@ public class SaldoPreCarregado extends MetodoPagamento {
     }
 
     @Override
+    public void validarSuporteRecargaSaldo() {
+    }
+
+    @Override
     public void adicionarSaldo(BigDecimal valor) {
         this.saldo = this.saldo.add(valor);
     }

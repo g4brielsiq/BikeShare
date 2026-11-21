@@ -6,7 +6,6 @@ import br.ufal.ic.p2.bikeshare.entidades.BicicletaEletrica;
 import br.ufal.ic.p2.bikeshare.entidades.Estacao;
 import br.ufal.ic.p2.bikeshare.excecoes.BicicletaIndisponivelException;
 import br.ufal.ic.p2.bikeshare.excecoes.EntidadeJaExisteException;
-import br.ufal.ic.p2.bikeshare.excecoes.EntidadeNaoEncontradaException;
 import br.ufal.ic.p2.bikeshare.excecoes.EstacaoSemVagasException;
 import br.ufal.ic.p2.bikeshare.excecoes.OperacaoInvalidaPorTipoException;
 import br.ufal.ic.p2.bikeshare.excecoes.ParametroNuloException;
@@ -41,7 +40,7 @@ public class ServicoEstacaoBicicleta {
 
     public void adicionarBicicleta(String idEstacao, String idBicicleta, String tipo) {
         RepositorioSistema repo = gerenciador.getRepositorio();
-        Estacao estacao = buscarEstacaoExistente(repo, idEstacao);
+        Estacao estacao = repo.buscarEstacaoExistente(idEstacao);
         validarNovaBicicletaId(repo, idBicicleta);
 
         if (BicicletaEletrica.TIPO.equals(tipo)) {
@@ -61,7 +60,7 @@ public class ServicoEstacaoBicicleta {
 
     public void adicionarBicicleta(String idEstacao, String idBicicleta, String tipo, String nivelBateriaStr) {
         RepositorioSistema repo = gerenciador.getRepositorio();
-        Estacao estacao = buscarEstacaoExistente(repo, idEstacao);
+        Estacao estacao = repo.buscarEstacaoExistente(idEstacao);
         validarNovaBicicletaId(repo, idBicicleta);
 
         if (BicicletaConvencional.TIPO.equals(tipo)) {
@@ -82,8 +81,8 @@ public class ServicoEstacaoBicicleta {
 
     public void removerBicicleta(String idEstacao, String idBicicleta) {
         RepositorioSistema repo = gerenciador.getRepositorio();
-        Estacao estacao = buscarEstacaoExistente(repo, idEstacao);
-        Bicicleta bicicleta = buscarBicicletaExistente(repo, idBicicleta);
+        Estacao estacao = repo.buscarEstacaoExistente(idEstacao);
+        Bicicleta bicicleta = repo.buscarBicicletaExistente(idBicicleta);
 
         if (!estacao.contemBicicleta(bicicleta.getId())) {
             throw new BicicletaIndisponivelException("Bicicleta nao esta nesta estacao.");
@@ -97,34 +96,25 @@ public class ServicoEstacaoBicicleta {
     }
 
     public String getAtributoBicicleta(String idBicicleta, String atributo) {
-        Bicicleta bicicleta = buscarBicicletaExistente(gerenciador.getRepositorio(), idBicicleta);
+        Bicicleta bicicleta = gerenciador.getRepositorio().buscarBicicletaExistente(idBicicleta);
         return bicicleta.getAtributo(atributo);
     }
 
     public String getEstadoBicicleta(String idBicicleta) {
-        Bicicleta bicicleta = buscarBicicletaExistente(gerenciador.getRepositorio(), idBicicleta);
+        Bicicleta bicicleta = gerenciador.getRepositorio().buscarBicicletaExistente(idBicicleta);
         return bicicleta.getEstado();
     }
 
     public String getVagasDisponiveis(String idEstacao) {
-        Estacao estacao = buscarEstacaoExistente(gerenciador.getRepositorio(), idEstacao);
+        Estacao estacao = gerenciador.getRepositorio().buscarEstacaoExistente(idEstacao);
         return String.valueOf(estacao.getVagasDisponiveis());
     }
 
     public String getBicicletasDisponiveis(String idEstacao) {
         RepositorioSistema repo = gerenciador.getRepositorio();
-        Estacao estacao = buscarEstacaoExistente(repo, idEstacao);
+        Estacao estacao = repo.buscarEstacaoExistente(idEstacao);
         int nivelMinimo = repo.getConfiguracao().getNivelMinimoBateriaEletrica();
         return String.valueOf(estacao.getBicicletasDisponiveis(nivelMinimo));
-    }
-
-    private Estacao buscarEstacaoExistente(RepositorioSistema repo, String idEstacao) {
-        Validador.validarNaoVazio(idEstacao, "Identificacao da estacao nao pode ser nula.");
-        Estacao estacao = repo.buscarEstacao(idEstacao);
-        if (estacao == null) {
-            throw new EntidadeNaoEncontradaException("Estacao nao existe.");
-        }
-        return estacao;
     }
 
     private void validarNovaBicicletaId(RepositorioSistema repo, String idBicicleta) {
@@ -132,14 +122,5 @@ public class ServicoEstacaoBicicleta {
         if (repo.buscarBicicleta(idBicicleta) != null) {
             throw new EntidadeJaExisteException("Bicicleta ja existe.");
         }
-    }
-
-    private Bicicleta buscarBicicletaExistente(RepositorioSistema repo, String idBicicleta) {
-        Validador.validarNaoVazio(idBicicleta, "Identificacao da bicicleta nao pode ser nula.");
-        Bicicleta bicicleta = repo.buscarBicicleta(idBicicleta);
-        if (bicicleta == null) {
-            throw new EntidadeNaoEncontradaException("Bicicleta nao existe.");
-        }
-        return bicicleta;
     }
 }

@@ -78,7 +78,7 @@ public abstract class Usuario implements Serializable {
             case "chavePix":
             case "saldo":
                 if (metodoPagamentoAtivo == null) {
-                    return obterErroSemMetodoPagamento(atributo);
+                    return MetodoPagamento.lancarErroAtributoIncompativel(atributo);
                 }
                 return metodoPagamentoAtivo.getAtributo(atributo);
             case "aluguelAtivo":
@@ -89,20 +89,6 @@ public abstract class Usuario implements Serializable {
             case "cnpj":
             case "razaoSocial":
                 return getAtributoEspecifico(atributo);
-            default:
-                throw new AtributoInexistenteException("Atributo nao existe.");
-        }
-    }
-
-    private String obterErroSemMetodoPagamento(String atributo) {
-        switch (atributo) {
-            case "numeroCartao":
-            case "validadeCartao":
-                throw new OperacaoInvalidaPorTipoException("Usuario nao usa cartao.");
-            case "chavePix":
-                throw new OperacaoInvalidaPorTipoException("Usuario nao usa pix.");
-            case "saldo":
-                throw new OperacaoInvalidaPorTipoException("Usuario nao usa saldo pre-carregado.");
             default:
                 throw new AtributoInexistenteException("Atributo nao existe.");
         }
@@ -138,9 +124,10 @@ public abstract class Usuario implements Serializable {
     }
 
     public void validarUsaSaldoPreCarregado() {
-        if (metodoPagamentoAtivo == null || !SaldoPreCarregado.NOME_METODO.equals(metodoPagamentoAtivo.getNomeMetodo())) {
+        if (metodoPagamentoAtivo == null) {
             throw new OperacaoInvalidaPorTipoException("Usuario nao usa saldo pre-carregado.");
         }
+        metodoPagamentoAtivo.validarSuporteRecargaSaldo();
     }
 
     public void adicionarSaldo(BigDecimal valor) {
